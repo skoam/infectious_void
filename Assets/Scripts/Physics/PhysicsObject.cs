@@ -20,11 +20,9 @@ public class PhysicsObject : MonoBehaviour {
     protected const float minMoveDistance = 0.001f;
     protected const float shellRadius = 0.01f;
 
-    void OnEnable () {
-        rb2d = ManagesPlayer.instance.getBody();
-    }
-
     void Start () {
+        rb2d = ManagesPlayer.instance.getBody();
+
         contactFilter.useTriggers = false;
         contactFilter.SetLayerMask (Physics2D.GetLayerCollisionMask (gameObject.layer));
         contactFilter.useLayerMask = true;
