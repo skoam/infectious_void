@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Ground
+  - Hero
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: BG
+    uniqueID: 2357488245
+    locked: 0
+  - name: Clouds
+    uniqueID: 4234440697
+    locked: 0
+  - name: BG_Objects
+    uniqueID: 3531590995
+    locked: 0
+  - name: Ground
+    uniqueID: 359452899
+    locked: 0
+  - name: Hero
+    uniqueID: 91231251
+    locked: 0
+  - name: FG_Objects
+    uniqueID: 3366181833
+    locked: 0
+  - name: Lights
+    uniqueID: 34303269
+    locked: 0
