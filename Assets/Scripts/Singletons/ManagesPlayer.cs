@@ -8,12 +8,13 @@ public class ManagesPlayer : MonoBehaviour {
     public PlayerSettings settings;
     public PlayerValues values;
 
-    private Animator playerAnimator;
-    private SpriteRenderer playerSprite;
-        
     public GameObject container;
     public GameObject representation;
     public GameObject humanRepresentation;
+    public BoxCollider2D hitbox_attack;
+    public GameObject illness;
+
+    private ParticleSystem.EmissionModule illnessEmission;
 
     void Awake () {
         if (instance != null) {
@@ -35,6 +36,8 @@ public class ManagesPlayer : MonoBehaviour {
             humanRepresentation.GetComponent<SpriteRenderer>().enabled = true;
             representation.GetComponent<SpriteRenderer>().enabled = false;
         }
+
+
 	}
 
     public Animator getAnimator () {
@@ -55,6 +58,14 @@ public class ManagesPlayer : MonoBehaviour {
         } else {
             return humanRepresentation.GetComponent<SpriteRenderer>();
         }
+    }
+
+    public BoxCollider2D getHitBox () {
+        return hitbox_attack;
+    }
+
+    public ParticleSystem getIllness () {
+        return illness.GetComponent<ParticleSystem>();
     }
 
     public bool transformed () {

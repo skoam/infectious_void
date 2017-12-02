@@ -15,8 +15,8 @@ TagManager:
   - 
   - Ground
   - Hero
-  - 
-  - 
+  - HitBox_Attack
+  - HitBox_Hit
   - 
   - 
   - 

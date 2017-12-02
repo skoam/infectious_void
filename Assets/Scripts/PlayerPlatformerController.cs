@@ -42,6 +42,14 @@ public class PlayerPlatformerController : PhysicsObject {
             ManagesPlayer.instance.getSprite().flipX = !ManagesPlayer.instance.getSprite().flipX;
         }
 
+        if (ManagesPlayer.instance.getSprite().flipX) {
+            ManagesPlayer.instance.getHitBox().offset = new Vector2(-0.5f, 0);
+        } else {
+            ManagesPlayer.instance.getHitBox().offset = new Vector2(0.5f, 0);
+        }
+
+        ManagesPlayer.instance.getHitBox().transform.position = this.transform.position;
+
         ManagesPlayer.instance.getAnimator().SetBool ("grounded", grounded);
         ManagesPlayer.instance.getAnimator().SetFloat ("velocity_x", Mathf.Abs (velocity.x) / maxSpeed);
 
@@ -68,7 +76,21 @@ public class PlayerPlatformerController : PhysicsObject {
 
         if (ManagesPlayer.instance.transformed()) {
             if (slashDuration == 0 && Input.GetAxis("Attack") > 0) {
+
+                ParticleSystem.ShapeModule shape = ManagesPlayer.instance.getIllness().shape;
+
+                if (ManagesPlayer.instance.values.illness == 1) {
+                    shape.randomPositionAmount = 1;
+                } else if (ManagesPlayer.instance.values.illness == 2) {
+                    shape.randomPositionAmount = 1.2f;
+                } else if (ManagesPlayer.instance.values.illness == 3) {
+                    shape.randomPositionAmount = 1.5f;
+                } else if (ManagesPlayer.instance.values.illness == 4) {
+                    shape.randomPositionAmount = 2;
+                }
+
                 walkDelay = 0;
+                ManagesPlayer.instance.getHitBox().transform.position = this.transform.position;
 
                 int currentSlash = ManagesPlayer.instance.settings.currentSlash;
 
