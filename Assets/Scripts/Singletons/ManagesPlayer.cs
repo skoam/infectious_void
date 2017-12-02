@@ -56,4 +56,8 @@ public class ManagesPlayer : MonoBehaviour {
             return humanRepresentation.GetComponent<SpriteRenderer>();
         }
     }
+
+    public bool transformed () {
+        return values.transformed;
+    }
 }

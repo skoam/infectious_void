@@ -8,31 +8,33 @@ public class PlayerPlatformerController : PhysicsObject {
     public float minSpeed = 0.1f;
     public float maxSpeed = 7;
     public float jumpTakeOffSpeed = 7;
+    
+    private float slashDuration;
+    private bool slash;
 
-    // Use this for initialization
+    private float walkDelay;
+
     void Awake () {
-        // spriteRenderer = GetComponent<SpriteRenderer> (); 
-        // animator = GetComponent<Animator> ();
     }
 
     protected override void SendAnimatorData () {
-        // animator.SetFloat("velocity_y", velocity.y);
     }
 
     protected override void ComputeVelocity () {
+        if (slashDuration != 0 && !ManagesPlayer.instance.settings.canAttackWhileMoving) {
+            return;
+        }
+
+        if (walkDelay > 0) {
+            return;
+        }
+
         Vector2 move = Vector2.zero;
 
         if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f) {
+            ManagesPlayer.instance.settings.currentSlash = 0;
             move.x = Input.GetAxis ("Horizontal");
         }
-
-        /*if (Input.GetButtonDown ("Jump") && grounded) {
-            velocity.y = jumpTakeOffSpeed;
-        } else if (Input.GetButtonUp ("Jump")) {
-            if (velocity.y > 0) {
-                velocity.y = velocity.y * 0.5f;
-            }
-        }*/
 
         bool flipSprite = (ManagesPlayer.instance.getSprite().flipX ? (move.x > 0.01f) : (move.x < -0.01f));
 
@@ -44,5 +46,45 @@ public class PlayerPlatformerController : PhysicsObject {
         ManagesPlayer.instance.getAnimator().SetFloat ("velocity_x", Mathf.Abs (velocity.x) / maxSpeed);
 
         targetVelocity = move * maxSpeed;
+    }
+
+    protected override void OnUpdate () {
+        if (slashDuration > 0) {
+            slashDuration -= Time.deltaTime;
+        } else {
+            if (slashDuration < 0) {
+                ManagesPlayer.instance.getAnimator().SetBool("slash", false);
+                walkDelay = ManagesPlayer.instance.settings.afterAttackFreeze;
+            }
+
+            slashDuration = 0;
+        }
+
+        if (walkDelay > 0) {
+            walkDelay -= Time.deltaTime;
+        } else {
+            walkDelay = 0;
+        }
+
+        if (ManagesPlayer.instance.transformed()) {
+            if (slashDuration == 0 && Input.GetAxis("Attack") > 0) {
+                walkDelay = 0;
+
+                int currentSlash = ManagesPlayer.instance.settings.currentSlash;
+
+                ManagesPlayer.instance.getAnimator().SetBool("slash", true);
+                ManagesPlayer.instance.getAnimator().SetInteger("slashType",
+                    currentSlash);
+                
+                slashDuration = 0;
+                slashDuration += ManagesPlayer.instance.settings.slashDuration[currentSlash];
+                
+                if (currentSlash + 1 < ManagesPlayer.instance.settings.slashDuration.Length) {
+                    ManagesPlayer.instance.settings.currentSlash++;
+                } else {
+                    ManagesPlayer.instance.settings.currentSlash = 0;
+                }
+            }
+        }
     }
 }

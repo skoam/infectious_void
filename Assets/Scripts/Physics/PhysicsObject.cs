@@ -32,6 +32,7 @@ public class PhysicsObject : MonoBehaviour {
 
     void Update () {
         targetVelocity = Vector2.zero;
+        OnUpdate();
         ComputeVelocity (); 
         SendAnimatorData ();
     }
@@ -42,6 +43,10 @@ public class PhysicsObject : MonoBehaviour {
 
     protected virtual void SendAnimatorData () {
 
+    }
+
+    protected virtual void OnUpdate () {
+        
     }
 
     void FixedUpdate() {
