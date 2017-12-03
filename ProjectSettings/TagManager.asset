@@ -18,8 +18,8 @@ TagManager:
   - Hero
   - HitBox_Attack
   - HitBox_Hit
-  - 
-  - 
+  - PowerUp
+  - Wall
   - 
   - 
   - 
@@ -62,4 +62,7 @@ TagManager:
     locked: 0
   - name: Lights
     uniqueID: 34303269
+    locked: 0
+  - name: UI
+    uniqueID: 315244963
     locked: 0

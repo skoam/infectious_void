@@ -36,8 +36,6 @@ public class ManagesPlayer : MonoBehaviour {
             humanRepresentation.GetComponent<SpriteRenderer>().enabled = true;
             representation.GetComponent<SpriteRenderer>().enabled = false;
         }
-
-
 	}
 
     public Animator getAnimator () {
@@ -50,6 +48,14 @@ public class ManagesPlayer : MonoBehaviour {
     
     public Rigidbody2D getBody () {
         return container.GetComponent<Rigidbody2D>();
+    }
+
+    public GameObject getPlayer () {
+         if (values.transformed) {
+            return representation;
+        } else {
+            return humanRepresentation;
+        }
     }
 
     public SpriteRenderer getSprite () {
