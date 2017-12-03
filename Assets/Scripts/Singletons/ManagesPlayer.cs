@@ -105,9 +105,6 @@ public class ManagesPlayer : MonoBehaviour {
 
     public void receiveDamage (int amount, float shake = 0) {
         if (invincible == 0) {
-            // CopyLocation cameraLocation = ManagesGame.instance.mainCamera.GetComponent<CopyLocation>();
-            // cameraLocation.xShakeOffset = shake;
-        
             ManagesGame.instance.onHitEffect.blink();
             values.health -= amount;
             invincible = invincibilitySecondsOnHit;
@@ -121,9 +118,11 @@ public class ManagesPlayer : MonoBehaviour {
     public void respawn () {
         if (ManagesGame.instance.lastSaveGame != null) {
             container.transform.position = ManagesGame.instance.lastSaveGame.position;
-            values.health = 3;
+            values.health = values.maxHealth;
             values.illness = 0;
         } else {
+            values.health = values.maxHealth;
+            values.illness = 0;
             SceneManager.LoadScene("dungeon_a");
         }
     }

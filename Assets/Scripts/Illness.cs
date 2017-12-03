@@ -18,7 +18,7 @@ public class Illness : MonoBehaviour {
             shape.randomPositionAmount = (float)ManagesPlayer.instance.values.illness / 10;
         }
 
-        if (ManagesPlayer.instance.values.illness == 0) {
+        if (ManagesPlayer.instance.values.illness == 0 || !ManagesPlayer.instance.isAlive()) {
             particleEmission(ps, false);
         } else if (ManagesPlayer.instance.values.illness == 1) {
             particleEmission(ps, true);

@@ -37,7 +37,9 @@ public class InteractableObject : MonoBehaviour {
     public bool transformationValue;
 
     public int increaseIllness = 0;
+    public int decreaseIllness = 0;
     public int decreaseHealth = 0;
+    public int increaseHealth = 0;
 
     public bool isSaveGame;
 
@@ -211,9 +213,26 @@ public class InteractableObject : MonoBehaviour {
             if (teleportPlayer) {
                 ManagesPlayer.instance.container.transform.position = teleportPosition.position;
             }
-
+            
             ManagesPlayer.instance.values.illness += increaseIllness;
+            if (ManagesPlayer.instance.values.illness > ManagesPlayer.instance.values.maxIllness) {
+                ManagesPlayer.instance.values.illness = ManagesPlayer.instance.values.maxIllness;
+            }
+
+            ManagesPlayer.instance.values.illness -= decreaseIllness;
+            if (ManagesPlayer.instance.values.illness < 0) {
+                ManagesPlayer.instance.values.illness = 0;
+            }
+            
             ManagesPlayer.instance.values.health -= decreaseHealth;
+            if (ManagesPlayer.instance.values.health < 0) {
+                ManagesPlayer.instance.values.health = 0;
+            }
+
+            ManagesPlayer.instance.values.health += decreaseHealth;
+            if (ManagesPlayer.instance.values.health > ManagesPlayer.instance.values.maxHealth) {
+                ManagesPlayer.instance.values.health = ManagesPlayer.instance.values.maxHealth;
+            }
 
             if (isSaveGame) {
                 ManagesGame.instance.lastSaveGame = this.transform;

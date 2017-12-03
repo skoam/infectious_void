@@ -22,19 +22,32 @@ public class ManagesGame : MonoBehaviour {
 
     public Transform lastSaveGame;
 
+    private bool dead;
+
 	void Start () {
 		
 	}
 	
 	void Update () {
         if (!ManagesPlayer.instance.isAlive()) {
+
+            if (!dead) {
+                Input.ResetInputAxes();
+                dead = true;
+            }
+
             if (Input.GetAxis("Interact") > 0) {
+                dead = false;
+
                 ManagesPlayer.instance.respawn();
+                
+                if (lastSaveGame != null) {
+                    InteractableObject[] interactableObjects = GameObject.FindObjectsOfType<InteractableObject>();
 
-                InteractableObject[] interactableObjects = GameObject.FindObjectsOfType<InteractableObject>();
+                    for (int i = 0; i < interactableObjects.Length; i++) {
+                        interactableObjects[i].restore();
+                    }
 
-                for (int i = 0; i < interactableObjects.Length; i++) {
-                    interactableObjects[i].restore();
                 }
             }
         }
