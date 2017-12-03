@@ -7,7 +7,12 @@ public class InteractableObject : MonoBehaviour {
     public bool locked;
     public float interactionDistance = 2.0f;
 
+    public bool ignoreTextTuple;
     public TextMesh[] interactionTextTuple;
+
+    public bool hitBoxTriggered;
+
+    private bool activatedByHitBox;
     private bool activated;
 
     public Animator[] activateAnimator;
@@ -27,34 +32,46 @@ public class InteractableObject : MonoBehaviour {
 	void Start () {
 		
 	}
+
+    public void hit () {
+        if (hitBoxTriggered) {
+            activatedByHitBox = true;
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
         if (requireTransformed && !ManagesPlayer.instance.values.transformed) {
             return;
         }
-
+        
         if (!activated && Vector3.Distance(ManagesPlayer.instance.getPlayer().transform.position, this.transform.position) < interactionDistance) {
-            foreach (TextMesh interactionText in interactionTextTuple) {
-                if (interactionText.color.a < 1) {
-                    interactionText.color = interactionText.color + new Color(0, 0, 0, 2 * Time.deltaTime);
+            if (!ignoreTextTuple) {
+                foreach (TextMesh interactionText in interactionTextTuple) {
+                    if (interactionText.color.a < 1) {
+                        interactionText.color = interactionText.color + new Color(0, 0, 0, 2 * Time.deltaTime);
+                    }
                 }
             }
         } else {
-            foreach (TextMesh interactionText in interactionTextTuple) {
-                if (interactionText.color.a > 0) {
-                    interactionText.color = interactionText.color - new Color(0, 0, 0, 2 * Time.deltaTime);
+            if (!ignoreTextTuple) {
+                foreach (TextMesh interactionText in interactionTextTuple) {
+                    if (interactionText.color.a > 0) {
+                        interactionText.color = interactionText.color - new Color(0, 0, 0, 2 * Time.deltaTime);
+                    }
                 }
             }
-
-            return;
+            
+            if (!activatedByHitBox) {
+                return;
+            }
         }
 
         if (locked) {
             return;
         }
 
-        if (!activated && Input.GetAxis("Interact") > 0) {
+        if (!activated && (activatedByHitBox || (!hitBoxTriggered && Input.GetAxis("Interact") > 0))) {
             foreach (Animator animator in activateAnimator) {
                 animator.SetBool("activated", true);
             }

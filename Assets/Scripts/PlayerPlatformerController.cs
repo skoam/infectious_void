@@ -9,6 +9,10 @@ public class PlayerPlatformerController : PhysicsObject {
     public float maxSpeed = 7;
     public float jumpTakeOffSpeed = 7;
     
+    RaycastHit2D[] attackHitBuffer = new RaycastHit2D[16];
+
+    public ContactFilter2D attackContactFilter;
+
     private float slashDuration;
     private bool slash;
 
@@ -66,6 +70,20 @@ public class PlayerPlatformerController : PhysicsObject {
             }
 
             slashDuration = 0;
+        }
+
+        if (slashDuration > 0) {
+            int count = ManagesPlayer.instance.getHitBox().Cast(Vector2.zero, attackContactFilter, attackHitBuffer);
+
+            for (int i = 0; i < count; i++) {
+                if (attackHitBuffer[i].transform.gameObject.layer == 14) {
+                    InteractableObject interaction = attackHitBuffer[i].transform.gameObject.GetComponent<InteractableObject>();
+                    
+                    if (interaction != null) {
+                        interaction.hit();
+                    }
+                }
+            }
         }
 
         if (walkDelay > 0) {
