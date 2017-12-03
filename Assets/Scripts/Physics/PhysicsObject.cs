@@ -54,6 +54,10 @@ public class PhysicsObject : MonoBehaviour {
             return;
         }
 
+        if (GetComponent<Collider2D>() != null && !GetComponent<Collider2D>().enabled) {
+            return;
+        }
+
         velocity += gravityModifier * Physics2D.gravity * Time.deltaTime;
         velocity.x = targetVelocity.x;
 

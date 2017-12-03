@@ -16,12 +16,28 @@ public class ManagesGame : MonoBehaviour {
     public Transform hitBoxRoot;
     public Transform hitBoxTemplate;
 
+    public GameObject mainCamera;
+
+    public BlinkOnceWhenHit onHitEffect;
+
+    public Transform lastSaveGame;
+
 	void Start () {
 		
 	}
 	
 	void Update () {
-		
+        if (!ManagesPlayer.instance.isAlive()) {
+            if (Input.GetAxis("Interact") > 0) {
+                ManagesPlayer.instance.respawn();
+
+                InteractableObject[] interactableObjects = GameObject.FindObjectsOfType<InteractableObject>();
+
+                for (int i = 0; i < interactableObjects.Length; i++) {
+                    interactableObjects[i].restore();
+                }
+            }
+        }
 	}
 
     public bool updatesAllowed () {

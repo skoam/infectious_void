@@ -31,8 +31,10 @@ public class CopyLocation : MonoBehaviour {
     private Vector3 velocity;
     private float timeReduction;
 
-    private bool forceFix;
+    public bool forceFix;
     private bool forceSmooth;
+
+    public float xShakeOffset;
 
     private void Start() {
         // QualitySettings.vSyncCount = 0;  // VSync must be disabled
@@ -56,8 +58,18 @@ public class CopyLocation : MonoBehaviour {
         forceFix = false;
         forceSmooth = false;
 
+        if (Mathf.Abs(xShakeOffset) > 0.1f) {
+            if (xShakeOffset < 0) {
+                xShakeOffset += 2 * Time.deltaTime;
+            } else {
+                xShakeOffset -= 2 * Time.deltaTime;
+            }
+        } else {
+            xShakeOffset = 0;
+        }
+
         Vector3 myPos = this.transform.position;
-        Vector3 newPos = new Vector3(target.position.x + offsetX, target.position.y + offsetY, target.position.z + offsetZ);
+        Vector3 newPos = new Vector3(target.position.x + offsetX + xShakeOffset, target.position.y + offsetY, target.position.z + offsetZ);
 
         newPos.y = 0;
 
@@ -68,6 +80,10 @@ public class CopyLocation : MonoBehaviour {
         if (accelerateByDistance && Vector3.Distance(transform.position, newPos) > minimumDistance) {
             timeReduction = Vector3.Distance(transform.position, newPos) / 10;
             timeReduction *= accelerationFactor;
+        }
+
+        if (Mathf.Abs(xShakeOffset) > 0) {
+            timeReduction = smoothingTime - 0.1f;
         }
 
         timeReduction = Mathf.Clamp(timeReduction, 0, smoothingTime - 0.1f);

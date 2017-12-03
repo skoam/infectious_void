@@ -28,6 +28,16 @@ public class Spike : MonoBehaviour {
         delay = startDelay;
     }
 
+    void OnTriggerEnter2D (Collider2D other) {
+        if (other.transform.gameObject.layer == 14 && other.transform.gameObject.GetComponent<InteractableObject>() != null) {
+            other.transform.gameObject.GetComponent<InteractableObject>().hit();
+        }
+
+        if (other.transform.gameObject.layer == 9) {
+            ManagesPlayer.instance.values.health = 0;
+        }
+    }
+
     void Update () {
         if (delay > 0) {
             delay -= Time.deltaTime;

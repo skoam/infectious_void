@@ -17,6 +17,7 @@ public class PlayerPlatformerController : PhysicsObject {
     private bool slash;
 
     private float walkDelay;
+    private float attackCheckDelay;
 
     void Awake () {
     }
@@ -76,7 +77,7 @@ public class PlayerPlatformerController : PhysicsObject {
             slashDuration = 0;
         }
 
-        if (slashDuration > 0) {
+        if (slashDuration > 0 && attackCheckDelay == 0) {
             int count = ManagesPlayer.instance.getHitBox().Cast(Vector2.zero, attackContactFilter, attackHitBuffer);
 
             for (int i = 0; i < count; i++) {
@@ -90,13 +91,20 @@ public class PlayerPlatformerController : PhysicsObject {
             }
         }
 
+        if (attackCheckDelay > 0) {
+            attackCheckDelay -= Time.deltaTime;
+        } else {
+            attackCheckDelay = 0;
+        }
+
+
         if (walkDelay > 0) {
             walkDelay -= Time.deltaTime;
         } else {
             walkDelay = 0;
         }
 
-        if (ManagesPlayer.instance.transformed()) {
+        if (ManagesPlayer.instance.transformed() && ManagesPlayer.instance.isAlive()) {
             if (slashDuration == 0 && Input.GetAxis("Attack") > 0) {
 
                 ParticleSystem.ShapeModule shape = ManagesPlayer.instance.getIllness().shape;
@@ -122,6 +130,8 @@ public class PlayerPlatformerController : PhysicsObject {
                 
                 slashDuration = 0;
                 slashDuration += ManagesPlayer.instance.settings.slashDuration[currentSlash];
+
+                attackCheckDelay = slashDuration / 4;
                 
                 if (currentSlash + 1 < ManagesPlayer.instance.settings.slashDuration.Length) {
                     ManagesPlayer.instance.settings.currentSlash++;

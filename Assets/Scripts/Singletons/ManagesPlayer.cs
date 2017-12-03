@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ManagesPlayer : MonoBehaviour {
     public static ManagesPlayer instance;
@@ -15,7 +16,7 @@ public class ManagesPlayer : MonoBehaviour {
     public GameObject illness;
 
     public float invincibilitySecondsOnHit = 2;
-    private float invincible;
+    public float invincible;
 
     private ParticleSystem.EmissionModule illnessEmission;
 
@@ -102,10 +103,28 @@ public class ManagesPlayer : MonoBehaviour {
         return values.transformed;
     }
 
-    public void receiveDamage (int amount) {
+    public void receiveDamage (int amount, float shake = 0) {
         if (invincible == 0) {
+            // CopyLocation cameraLocation = ManagesGame.instance.mainCamera.GetComponent<CopyLocation>();
+            // cameraLocation.xShakeOffset = shake;
+        
+            ManagesGame.instance.onHitEffect.blink();
             values.health -= amount;
             invincible = invincibilitySecondsOnHit;
+        }
+    }
+
+    public bool isInvincible () {
+        return invincible > 0;
+    }
+
+    public void respawn () {
+        if (ManagesGame.instance.lastSaveGame != null) {
+            container.transform.position = ManagesGame.instance.lastSaveGame.position;
+            values.health = 3;
+            values.illness = 0;
+        } else {
+            SceneManager.LoadScene("dungeon_a");
         }
     }
 }

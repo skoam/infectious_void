@@ -11,8 +11,9 @@ public class InteractableObject : MonoBehaviour {
     public TextMesh[] interactionTextTuple;
 
     public bool hitBoxTriggered;
+    public bool automaticTriggerOnDistance;
 
-    private bool activatedByHitBox;
+    private bool forceActivation;
     private bool activated;
 
     public Animator[] activateAnimator;
@@ -21,22 +22,97 @@ public class InteractableObject : MonoBehaviour {
     public Collider2D[] deactivateCollider;
     public ParticleSystem[] emitParticles;
     public int[] emissionAmounts;
+    public ParticleSystem[] activateParticleSystems;
+    public ParticleSystem[] deactivateParticleSystems;
     public GameObject[] activateGameObject;
     public GameObject[] deactivateGameObject;
     public SpriteRenderer[] activateRenderer;
     public SpriteRenderer[] deactivateRenderer;
+    public InteractableObject[] permanentlyDisableInteractableObject;
+
+    public bool teleportPlayer;
+    public Transform teleportPosition;
+
     public bool transformPlayer;
     public bool transformationValue;
 
+    public int increaseIllness = 0;
+    public int decreaseHealth = 0;
+
+    public bool isSaveGame;
+
+    public bool doNotRestore;
+
+    private Vector3 originalPosition;
+
 	// Use this for initialization
 	void Start () {
-		
+		originalPosition = this.transform.position;
 	}
+
+    public bool wasActivated () {
+        return activated;
+    }
 
     public void hit () {
         if (hitBoxTriggered) {
-            activatedByHitBox = true;
+            forceActivation = true;
         }
+    }
+
+    public void restore () {
+        if (doNotRestore) {
+            return;
+        }
+
+        foreach (Animator animator in activateAnimator) {
+            animator.SetBool("activated", false);
+        }
+
+        foreach (Animator animator in deactivateAnimator) {
+            animator.SetBool("activated", false);
+        }
+
+        foreach (Collider2D collider in activateCollider) {
+            collider.enabled = false;
+        }
+
+        foreach (Collider2D collider in deactivateCollider) {
+            collider.enabled = true;
+        }
+
+        for (int i = 0; i < activateParticleSystems.Length; i++) {
+            particleEmission(activateParticleSystems[i], false);
+        }
+        
+        for (int i = 0; i < deactivateParticleSystems.Length; i++) {
+            particleEmission(deactivateParticleSystems[i], true);
+        }
+        
+        for (int i = 0; i < activateGameObject.Length; i++) {
+            activateGameObject[i].SetActive(false);
+        }
+
+        for (int i = 0; i < deactivateGameObject.Length; i++) {
+            deactivateGameObject[i].SetActive(true);
+        }
+
+        for (int i = 0; i < activateRenderer.Length; i++) {
+            activateRenderer[i].enabled = false;
+        }
+
+        for (int i = 0; i < deactivateRenderer.Length; i++) {
+            deactivateRenderer[i].enabled = true;
+        }
+
+        if (transformPlayer) {
+            ManagesPlayer.instance.values.transformed = !transformationValue;
+        }
+
+        this.transform.position = originalPosition;
+
+        forceActivation = false;
+        activated = false;
     }
 	
 	// Update is called once per frame
@@ -50,6 +126,10 @@ public class InteractableObject : MonoBehaviour {
         }
         
         if (!activated && Vector3.Distance(ManagesPlayer.instance.getPlayer().transform.position, this.transform.position) < interactionDistance) {
+            if (automaticTriggerOnDistance) {
+                forceActivation = true;
+            }
+
             if (!ignoreTextTuple) {
                 foreach (TextMesh interactionText in interactionTextTuple) {
                     if (interactionText.color.a < 1) {
@@ -66,7 +146,7 @@ public class InteractableObject : MonoBehaviour {
                 }
             }
             
-            if (!activatedByHitBox) {
+            if (!forceActivation) {
                 return;
             }
         }
@@ -75,7 +155,7 @@ public class InteractableObject : MonoBehaviour {
             return;
         }
 
-        if (!activated && (activatedByHitBox || (!hitBoxTriggered && Input.GetAxis("Interact") > 0))) {
+        if (!activated && (forceActivation || (!hitBoxTriggered && Input.GetAxis("Interact") > 0))) {
             foreach (Animator animator in activateAnimator) {
                 animator.SetBool("activated", true);
             }
@@ -91,7 +171,15 @@ public class InteractableObject : MonoBehaviour {
             foreach (Collider2D collider in deactivateCollider) {
                 collider.enabled = false;
             }
+
+            for (int i = 0; i < activateParticleSystems.Length; i++) {
+                particleEmission(activateParticleSystems[i], true);
+            }
             
+            for (int i = 0; i < deactivateParticleSystems.Length; i++) {
+                particleEmission(deactivateParticleSystems[i], false);
+            }
+
             for (int i = 0; i < emitParticles.Length; i++) {
                 emitParticles[i].Emit(emissionAmounts[i]);
             }
@@ -112,11 +200,31 @@ public class InteractableObject : MonoBehaviour {
                 deactivateRenderer[i].enabled = false;
             }
 
+            for (int i = 0; i < permanentlyDisableInteractableObject.Length; i++) {
+                permanentlyDisableInteractableObject[i].doNotRestore = true;
+            }
+
             if (transformPlayer) {
                 ManagesPlayer.instance.values.transformed = transformationValue;
+            }
+
+            if (teleportPlayer) {
+                ManagesPlayer.instance.container.transform.position = teleportPosition.position;
+            }
+
+            ManagesPlayer.instance.values.illness += increaseIllness;
+            ManagesPlayer.instance.values.health -= decreaseHealth;
+
+            if (isSaveGame) {
+                ManagesGame.instance.lastSaveGame = this.transform;
             }
 
             activated = true;
         }
 	}
+
+    public void particleEmission(ParticleSystem PS, bool newVal) {
+        ParticleSystem.EmissionModule em = PS.emission;
+        em.enabled = newVal;
+    }
 }

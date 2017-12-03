@@ -16,6 +16,7 @@ public class MoveToPlayer : PhysicsObject {
 
     private float walkDelay;
     private float attackDelay;
+    private float attackCheckDelay;
 
     public float minimumDistance;
     public float maximumDistance;
@@ -75,7 +76,13 @@ public class MoveToPlayer : PhysicsObject {
 
         if (randomDirectionTimer > randomDirectionInterval) {
             randomDirection = Random.Range(-1, 2);
-            Debug.Log(randomDirection);
+            
+            if (randomDirection != 1) {
+                if (Random.Range(0, 100) > 10) {
+                    randomDirection = 1;
+                }
+            }
+
             randomDirectionTimer = 0;
         }
 
@@ -129,7 +136,7 @@ public class MoveToPlayer : PhysicsObject {
             slashDuration = 0;
         }
 
-        if (slashDuration > 0) {
+        if (slashDuration > 0 && attackCheckDelay == 0) {
             int count = hitbox.Cast(Vector2.zero, attackContactFilter, attackHitBuffer);
 
             for (int i = 0; i < count; i++) {
@@ -142,11 +149,17 @@ public class MoveToPlayer : PhysicsObject {
                         }
 
                         if (attackHitBuffer[i].transform.gameObject.layer == 9) {
-                            ManagesPlayer.instance.receiveDamage(attackStrength);
+                            ManagesPlayer.instance.receiveDamage(attackStrength, sprite.flipX ? -0.5f : 0.5f);
                         }
                     }
                 }
             }
+        }
+
+        if (attackCheckDelay > 0) {
+            attackCheckDelay -= Time.deltaTime;
+        } else {
+            attackCheckDelay = 0;
         }
 
         if (attackDelay > 0) {
@@ -162,6 +175,10 @@ public class MoveToPlayer : PhysicsObject {
         }
 
         if (!ManagesPlayer.instance.isAlive()) {
+            return;
+        }
+
+        if (GetComponent<InteractableObject>() != null && GetComponent<InteractableObject>().wasActivated()) {
             return;
         }
 
@@ -183,6 +200,8 @@ public class MoveToPlayer : PhysicsObject {
             
             slashDuration = 0;
             slashDuration += attackLengths[currentAttack];
+
+            attackCheckDelay = slashDuration / 4;
             
             if (currentAttack + 1 < attackLengths.Length) {
                 currentAttack++;
