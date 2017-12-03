@@ -10,6 +10,7 @@ public class PhysicsObject : MonoBehaviour {
     protected Vector2 targetVelocity;
     protected bool grounded;
     protected Vector2 groundNormal;
+
     protected Rigidbody2D rb2d;
     protected Vector2 velocity;
     protected ContactFilter2D contactFilter;
@@ -29,6 +30,7 @@ public class PhysicsObject : MonoBehaviour {
 
     void Update () {
         targetVelocity = Vector2.zero;
+
         OnUpdate();
         ComputeVelocity (); 
         SendAnimatorData ();
@@ -47,6 +49,11 @@ public class PhysicsObject : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        if (rb2d == null) {
+            rb2d = GetComponent<Rigidbody2D>();
+            return;
+        }
+
         velocity += gravityModifier * Physics2D.gravity * Time.deltaTime;
         velocity.x = targetVelocity.x;
 
@@ -93,8 +100,6 @@ public class PhysicsObject : MonoBehaviour {
                 float modifiedDistance = hitBufferList [i].distance - shellRadius;
                 distance = modifiedDistance < distance ? modifiedDistance : distance;
             }
-
-
         }
 
         rb2d.position = rb2d.position + move.normalized * distance;

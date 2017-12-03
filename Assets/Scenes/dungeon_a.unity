@@ -112,36 +112,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &19994911
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 19994912}
-  m_Layer: 0
-  m_Name: HitBoxes
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &19994912
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 19994911}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.520721, y: 1.2722301, z: -0.062503055}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1986020164}
-  - {fileID: 1529935200}
-  m_Father: {fileID: 0}
-  m_RootOrder: 18
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &94368620
 Prefab:
   m_ObjectHideFlags: 0
@@ -496,7 +466,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1448850639
+  randomSeed: 2135758585
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3845,9 +3815,9 @@ MonoBehaviour:
   minGroundNormalY: 0.65
   gravityModifier: 1.5
   minSpeed: 0.1
-  maxSpeed: 2
+  maxSpeed: 1.5
   attackContactFilter:
-    useTriggers: 0
+    useTriggers: 1
     useLayerMask: 0
     useDepth: 0
     useOutsideDepth: 0
@@ -3860,16 +3830,18 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
-  minimumDistance: 1
+  minimumDistance: 0.5
   maximumDistance: 4
+  minimumAttackDistance: 1
   attackLengths:
+  - 0.4
   - 0.4
   currentAttack: 0
   afterAttackFreeze: 0.5
   afterAttackPause: 2
   attackRandomly: 1
+  attackStrength: 1
   randomAttackChance: 10
-  hitbox: {fileID: 1986020165}
 --- !u!1 &153755801
 GameObject:
   m_ObjectHideFlags: 0
@@ -4225,7 +4197,7 @@ Prefab:
       propertyPath: m_Text
       value: 'Darkness is creeping over your body.
 
-        You are sick.'
+        You are feeling sick.'
       objectReference: {fileID: 0}
     - target: {fileID: 1028833058912694, guid: c52027bdf8da0482ea06e974f68963a6, type: 2}
       propertyPath: m_Name
@@ -4252,6 +4224,46 @@ Transform:
   m_PrefabParentObject: {fileID: 4324765601988650, guid: c52027bdf8da0482ea06e974f68963a6,
     type: 2}
   m_PrefabInternal: {fileID: 385256681}
+--- !u!1 &417156885
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 417156886}
+  - component: {fileID: 417156887}
+  m_Layer: 10
+  m_Name: HitBoxes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &417156886
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 417156885}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.21908, y: -0.28210038, z: -0.13085938}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &417156887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 417156885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c97625d5d7644c45824e266d078ac40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &454231843
 GameObject:
   m_ObjectHideFlags: 0
@@ -8288,7 +8300,7 @@ MonoBehaviour:
   maxSpeed: 3
   jumpTakeOffSpeed: 7
   attackContactFilter:
-    useTriggers: 0
+    useTriggers: 1
     useLayerMask: 0
     useDepth: 0
     useOutsideDepth: 0
@@ -12182,8 +12194,8 @@ MonoBehaviour:
   container: {fileID: 1010103773}
   representation: {fileID: 1089527480}
   humanRepresentation: {fileID: 1786911072}
-  hitbox_attack: {fileID: 1529935199}
   illness: {fileID: 1030089164}
+  invincibilitySecondsOnHit: 2
 --- !u!114 &1124011017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12195,6 +12207,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b60b62035e33340ed8925f4555577a7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitBoxRoot: {fileID: 417156886}
+  hitBoxTemplate: {fileID: 4940441343828534, guid: 0ab30c72d36d44f19ab0267389cbb0fd,
+    type: 2}
 --- !u!114 &1124011018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19677,60 +19692,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1529935198
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1529935200}
-  - component: {fileID: 1529935199}
-  m_Layer: 10
-  m_Name: Hitbox_Player_Attack
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!61 &1529935199
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1529935198}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
---- !u!4 &1529935200
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1529935198}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.520721, y: -1.2722301, z: 0.062503055}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 19994912}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1646427973
 GameObject:
   m_ObjectHideFlags: 0
@@ -24055,60 +24016,6 @@ Transform:
   m_PrefabParentObject: {fileID: 4272927613996280, guid: 28fae4a5798954fbe9d475e430cdad8d,
     type: 2}
   m_PrefabInternal: {fileID: 1946078363}
---- !u!1 &1986020163
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1986020164}
-  - component: {fileID: 1986020165}
-  m_Layer: 10
-  m_Name: Hitbox_Enemy_Attack
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1986020164
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1986020163}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.520721, y: -1.2722301, z: 0.062503055}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 19994912}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &1986020165
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1986020163}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
 --- !u!1001 &2083369042
 Prefab:
   m_ObjectHideFlags: 0

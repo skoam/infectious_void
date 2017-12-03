@@ -20,6 +20,8 @@ public class MoveToPlayer : PhysicsObject {
     public float minimumDistance;
     public float maximumDistance;
 
+    public float minimumAttackDistance;
+
     public float[] attackLengths;
     public int currentAttack = 0;
 
@@ -27,23 +29,37 @@ public class MoveToPlayer : PhysicsObject {
     public float afterAttackPause = 0.5f;
 
     public bool attackRandomly;
+    public int attackStrength = 1;
 
     [Range(0, 100)]
     public float randomAttackChance;
 
     private SpriteRenderer sprite;
     private Animator animator;
-    public Collider2D hitbox;
+    private Collider2D hitbox;
+
+    private float randomDirectionInterval = 1;
+    private float randomDirectionTimer = 0;
+
+    private int randomDirection = 1;
 
     void Awake () {
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
     }
 
+    void Start () {
+        hitbox = GameObject.Instantiate(ManagesGame.instance.hitBoxTemplate, ManagesGame.instance.hitBoxRoot).GetComponent<Collider2D>();
+    }
+
     protected override void SendAnimatorData () {
     }
 
     protected override void ComputeVelocity () {
+        if (hitbox == null) {
+            return;
+        }
+
         if (slashDuration != 0 && !ManagesPlayer.instance.settings.canAttackWhileMoving) {
             return;
         }
@@ -53,18 +69,33 @@ public class MoveToPlayer : PhysicsObject {
         }
 
         Vector2 move = Vector2.zero;
+        currentAttack = 0;
+
+        randomDirectionTimer += Time.deltaTime;
+
+        if (randomDirectionTimer > randomDirectionInterval) {
+            randomDirection = Random.Range(-1, 2);
+            Debug.Log(randomDirection);
+            randomDirectionTimer = 0;
+        }
 
         float distance = Vector3.Distance(this.transform.position, ManagesPlayer.instance.getPlayer().transform.position);
         if (distance  > minimumDistance && distance < maximumDistance) {
-            move.x = ManagesPlayer.instance.getPlayer().transform.position.x < this.transform.position.x ? -maxSpeed : maxSpeed;
+            move.x = ManagesPlayer.instance.getPlayer().transform.position.x < this.transform.position.x ? -maxSpeed * randomDirection : maxSpeed * randomDirection;
         }
 
-        currentAttack = 0;
+        if (randomDirection == 0 || distance > maximumDistance) {
+            if (ManagesPlayer.instance.getPlayer().transform.position.x < this.transform.position.x) {
+                sprite.flipX = true;
+            } else {
+                sprite.flipX = false;
+            }
+        } else {
+            bool flipSprite = (sprite.flipX ? (move.x > 0.01f) : (move.x < -0.01f));
 
-        bool flipSprite = (sprite.flipX ? (move.x > 0.01f) : (move.x < -0.01f));
-
-        if (flipSprite) {
-            sprite.flipX = !sprite.flipX;
+            if (flipSprite) {
+                sprite.flipX = !sprite.flipX;
+            }
         }
 
         if (sprite.flipX) {
@@ -82,6 +113,10 @@ public class MoveToPlayer : PhysicsObject {
     }
 
     protected override void OnUpdate () {
+        if (hitbox == null) {
+            return;
+        }
+
         if (slashDuration > 0) {
             slashDuration -= Time.deltaTime;
         } else {
@@ -105,6 +140,10 @@ public class MoveToPlayer : PhysicsObject {
                         if (interaction != null) {
                             interaction.hit();
                         }
+
+                        if (attackHitBuffer[i].transform.gameObject.layer == 9) {
+                            ManagesPlayer.instance.receiveDamage(attackStrength);
+                        }
                     }
                 }
             }
@@ -122,8 +161,12 @@ public class MoveToPlayer : PhysicsObject {
             walkDelay = 0;
         }
 
+        if (!ManagesPlayer.instance.isAlive()) {
+            return;
+        }
+
         float distance = Vector3.Distance(this.transform.position, ManagesPlayer.instance.getPlayer().transform.position);
-        if (distance < minimumDistance || distance > maximumDistance) {
+        if (distance > minimumAttackDistance) {
             return;
         }
 

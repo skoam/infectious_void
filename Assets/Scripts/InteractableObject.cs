@@ -41,6 +41,10 @@ public class InteractableObject : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (!ManagesGame.instance.updatesAllowed()) {
+            return;
+        }
+
         if (requireTransformed && !ManagesPlayer.instance.values.transformed) {
             return;
         }

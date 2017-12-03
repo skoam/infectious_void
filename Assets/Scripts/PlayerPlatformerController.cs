@@ -25,6 +25,10 @@ public class PlayerPlatformerController : PhysicsObject {
     }
 
     protected override void ComputeVelocity () {
+        if (!ManagesGame.instance.playerInteractionAllowed()) {
+            return;
+        }
+
         if (slashDuration != 0 && !ManagesPlayer.instance.settings.canAttackWhileMoving) {
             return;
         }

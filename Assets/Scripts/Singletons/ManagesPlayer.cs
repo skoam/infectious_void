@@ -11,8 +11,11 @@ public class ManagesPlayer : MonoBehaviour {
     public GameObject container;
     public GameObject representation;
     public GameObject humanRepresentation;
-    public BoxCollider2D hitbox_attack;
+    Collider2D hitbox;
     public GameObject illness;
+
+    public float invincibilitySecondsOnHit = 2;
+    private float invincible;
 
     private ParticleSystem.EmissionModule illnessEmission;
 
@@ -27,14 +30,30 @@ public class ManagesPlayer : MonoBehaviour {
 	void Start () {
 		
 	}
+
+    public bool isAlive () {
+        return values.health > 0 && values.illness < 4;
+    }
 	
 	void Update () {
+        if (invincible > 0) {
+            invincible -= Time.deltaTime;
+        } else {
+            invincible = 0;
+        }
+
         if (values.transformed) {
             humanRepresentation.GetComponent<SpriteRenderer>().enabled = false;
             representation.GetComponent<SpriteRenderer>().enabled = true;
         } else {
             humanRepresentation.GetComponent<SpriteRenderer>().enabled = true;
             representation.GetComponent<SpriteRenderer>().enabled = false;
+        }
+
+        if (!isAlive()) {
+            getAnimator().SetBool("dead", true);
+        } else {
+            getAnimator().SetBool("dead", false);
         }
 	}
 
@@ -66,8 +85,13 @@ public class ManagesPlayer : MonoBehaviour {
         }
     }
 
-    public BoxCollider2D getHitBox () {
-        return hitbox_attack;
+    public Collider2D getHitBox () {
+        if (hitbox != null) {
+            return hitbox;
+        } else {
+            hitbox = GameObject.Instantiate(ManagesGame.instance.hitBoxTemplate, ManagesGame.instance.hitBoxRoot).GetComponent<Collider2D>();
+            return hitbox;
+        }
     }
 
     public ParticleSystem getIllness () {
@@ -76,5 +100,12 @@ public class ManagesPlayer : MonoBehaviour {
 
     public bool transformed () {
         return values.transformed;
+    }
+
+    public void receiveDamage (int amount) {
+        if (invincible == 0) {
+            values.health -= amount;
+            invincible = invincibilitySecondsOnHit;
+        }
     }
 }
