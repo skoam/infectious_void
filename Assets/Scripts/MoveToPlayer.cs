@@ -197,7 +197,13 @@ public class MoveToPlayer : PhysicsObject {
             animator.SetBool("slash", true);
             animator.SetInteger("slashType",
                 currentAttack);
-            
+
+            if (currentAttack == 0) {
+                ManagesGame.instance.playSound(ManagesGame.instance.slash_2, 0.4f);
+            } else {
+                ManagesGame.instance.playSound(ManagesGame.instance.slash_3, 0.4f);
+            }
+
             slashDuration = 0;
             slashDuration += attackLengths[currentAttack];
 

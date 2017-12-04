@@ -127,7 +127,13 @@ public class PlayerPlatformerController : PhysicsObject {
                 ManagesPlayer.instance.getAnimator().SetBool("slash", true);
                 ManagesPlayer.instance.getAnimator().SetInteger("slashType",
                     currentSlash);
-                
+
+                 if (currentSlash == 0) {
+                    ManagesGame.instance.playSound(ManagesGame.instance.slash_2, 0.4f);
+                } else {
+                    ManagesGame.instance.playSound(ManagesGame.instance.slash_3, 0.4f);
+                }
+               
                 slashDuration = 0;
                 slashDuration += ManagesPlayer.instance.settings.slashDuration[currentSlash];
 

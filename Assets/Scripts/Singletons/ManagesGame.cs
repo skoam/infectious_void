@@ -24,19 +24,45 @@ public class ManagesGame : MonoBehaviour {
 
     private bool dead;
 
+    public AudioClip aaah;
+    public AudioClip death;
+    public AudioClip dissolve;
+    public AudioClip slash_1;
+    public AudioClip slash_2;
+    public AudioClip slash_3;
+    public AudioClip _switch;
+
+    public AudioSource FXSource;
+
+    private float respawnDelay;
+
 	void Start () {
 		
 	}
+
+    public void playSound (AudioClip sound, float level) {
+        if (FXSource != null) {
+            FXSource.PlayOneShot(sound, level);
+        }
+    }
 	
 	void Update () {
-        if (!ManagesPlayer.instance.isAlive()) {
+        if (respawnDelay > 0) {
+            respawnDelay -= Time.deltaTime;
+        } else {
+            respawnDelay = 0;
+        }
 
+        if (!ManagesPlayer.instance.isAlive()) {
             if (!dead) {
+                playSound(aaah, 0.6f);
+                playSound(death, 0.3f);
                 Input.ResetInputAxes();
                 dead = true;
+                respawnDelay = 1;
             }
 
-            if (Input.GetAxis("Interact") > 0) {
+            if (respawnDelay == 0 && Input.GetAxis("Interact") > 0) {
                 dead = false;
 
                 ManagesPlayer.instance.respawn();

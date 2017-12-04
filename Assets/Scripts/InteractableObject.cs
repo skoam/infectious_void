@@ -47,6 +47,9 @@ public class InteractableObject : MonoBehaviour {
 
     private Vector3 originalPosition;
 
+    public AudioClip activationSound;
+    public float soundLevel;
+
 	// Use this for initialization
 	void Start () {
 		originalPosition = this.transform.position;
@@ -229,13 +232,17 @@ public class InteractableObject : MonoBehaviour {
                 ManagesPlayer.instance.values.health = 0;
             }
 
-            ManagesPlayer.instance.values.health += decreaseHealth;
+            ManagesPlayer.instance.values.health += increaseHealth;
             if (ManagesPlayer.instance.values.health > ManagesPlayer.instance.values.maxHealth) {
                 ManagesPlayer.instance.values.health = ManagesPlayer.instance.values.maxHealth;
             }
 
             if (isSaveGame) {
                 ManagesGame.instance.lastSaveGame = this.transform;
+            }
+            
+            if (activationSound != null) {
+                ManagesGame.instance.playSound(activationSound, soundLevel);
             }
 
             activated = true;
